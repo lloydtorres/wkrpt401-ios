@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.lloydtorres.wkrpt401.proto";
+option java_outer_classname = "WkrptProto";
+option objc_class_prefix = "WP";
+
+package wkrpt401;
+
+service UserManager {
+  rpc GetBestPersonality (UserData) returns (UserResponse) {}
+}
+
+message UserData {
+  string name = 1;
+  string token = 2;
+  uint32 level = 3;
+  repeated PersonalityData personality = 4;
+}
+
+message PersonalityData {
+  string name = 1;
+  uint32 amount = 2;
+}
+
+message UserResponse {
+  string response = 1;
+}
