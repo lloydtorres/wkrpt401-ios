@@ -11,6 +11,7 @@ PODS:
   - BoringSSL/Implementation (6.0):
     - BoringSSL/Interface (= 6.0)
   - BoringSSL/Interface (6.0)
+  - Gloss (1.1.0)
   - gRPC (1.0.0):
     - gRPC-Core (= 1.0.0)
     - gRPC-RxLibrary (= 1.0.0)
@@ -41,6 +42,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 4.0)
+  - Gloss (~> 1.1)
   - wkrpt401-grpc (from `.`)
 
 EXTERNAL SOURCES:
@@ -52,6 +54,7 @@ SPEC CHECKSUMS:
   '!ProtoCompiler-gRPCPlugin': c3f70b2094c99dcef29dd0658416f25c35a1c6f3
   Alamofire: e266cf991b933498df791e645e0d8ac294492153
   BoringSSL: 8de34f3100d671c9cbc494e1a462004c486d7e34
+  Gloss: a8340c124ff69c5d1c12e06c252373f4a16d2958
   gRPC: 2d6b82f7a8773f933465bcbdf519a7cf8ebef41c
   gRPC-Core: 7ce9d18a7fb9fffc0f57646608d0741782b16996
   gRPC-ProtoRPC: 51745b5ebe4a844dc6e1ecf767d74ae3d124ea1e
@@ -59,6 +62,6 @@ SPEC CHECKSUMS:
   Protobuf: 265e9977d04a83eba9cefb0bed3ad07e41033b4a
   wkrpt401-grpc: 4728dd93f34ca780b1d87c803cc29f87ec560f86
 
-PODFILE CHECKSUM: c319e6ea8e16f5821c67bf6eeb027f32915865c5
+PODFILE CHECKSUM: 65efe8ed42202417bfb7fe51be1e90add9fd5a14
 
 COCOAPODS: 1.1.1
