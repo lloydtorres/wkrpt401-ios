@@ -24,26 +24,46 @@
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zz3-HH-Sh5">
                                 <rect key="frame" x="16" y="200" width="343" height="30"/>
-                                <state key="normal" title="Send data via gRPC"/>
+                                <state key="normal" title="Send one request via gRPC"/>
                                 <connections>
-                                    <action selector="sendDataOnGrpc:" destination="BYZ-38-t0r" eventType="touchUpInside" id="B9d-1g-Xri"/>
+                                    <action selector="sendSingleRequestOnGrpc:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rGY-4d-e1W"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MDV-xS-1i7">
                                 <rect key="frame" x="16" y="250" width="343" height="30"/>
-                                <state key="normal" title="Send data via REST API"/>
+                                <state key="normal" title="Send one request via RESTful API"/>
                                 <connections>
-                                    <action selector="sendDataOnRestApi:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eTs-FB-zWc"/>
+                                    <action selector="sendSingleRequestOnRestfulApi:" destination="BYZ-38-t0r" eventType="touchUpInside" id="TV6-IZ-bQb"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0W6-IH-2Ui">
+                                <rect key="frame" x="16" y="300" width="343" height="30"/>
+                                <state key="normal" title="Send 100 requests via gRPC"/>
+                                <connections>
+                                    <action selector="sendHundredRequestsOnGrpc:" destination="BYZ-38-t0r" eventType="touchUpInside" id="a4R-Ad-q5I"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YrE-HR-Ivv">
+                                <rect key="frame" x="16" y="350" width="343" height="30"/>
+                                <state key="normal" title="Send 100 requests via RESTful API"/>
+                                <connections>
+                                    <action selector="sendHundredRequestsOnRestfulApi:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zsy-IO-4ih"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="YrE-HR-Ivv" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="9d9-i0-q34"/>
+                            <constraint firstItem="0W6-IH-2Ui" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="A6W-7h-HDm"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zz3-HH-Sh5" secondAttribute="trailing" id="HnF-1a-4dT"/>
                             <constraint firstAttribute="trailingMargin" secondItem="MDV-xS-1i7" secondAttribute="trailing" id="QVQ-k7-cfM"/>
+                            <constraint firstItem="0W6-IH-2Ui" firstAttribute="top" secondItem="MDV-xS-1i7" secondAttribute="bottom" constant="20" id="TA9-Lq-Mrk"/>
                             <constraint firstItem="MDV-xS-1i7" firstAttribute="top" secondItem="zz3-HH-Sh5" secondAttribute="bottom" constant="20" id="aeI-uQ-Fj8"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="0W6-IH-2Ui" secondAttribute="trailing" id="fPp-zH-a2s"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="YrE-HR-Ivv" secondAttribute="trailing" id="lOn-9k-R7e"/>
                             <constraint firstItem="zz3-HH-Sh5" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="180" id="rZy-W3-xhr"/>
                             <constraint firstItem="MDV-xS-1i7" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="t8W-2t-Kuu"/>
+                            <constraint firstItem="YrE-HR-Ivv" firstAttribute="top" secondItem="0W6-IH-2Ui" secondAttribute="bottom" constant="20" id="wqL-ga-Pe0"/>
                             <constraint firstItem="zz3-HH-Sh5" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="yB9-tG-737"/>
                         </constraints>
                     </view>

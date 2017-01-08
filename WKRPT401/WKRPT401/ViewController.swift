@@ -28,18 +28,24 @@ class ViewController: UIViewController {
     let emiliaMagicKey = "magic"
     let emiliaMagicAmount = 7
     
-    // MARK: gRPC Calls
+    // MARK: gRPC Objects
     let userManager = WPUserManager(host: ViewController.grpcHost)
+    
+    // MARK: Request counters
+    var grpcRequests = 0
+    var restfulApiRequests = 0
 
+    // MARK: Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Set non-HTTPS gRPC requests
         GRPCCall.useInsecureConnections(forHost: ViewController.grpcHost)
     }
-
-    @IBAction func sendDataOnGrpc(_ sender: UIButton) {
-        // Create gRPC model
+    
+    // MARK: Helper functions
+    // Create gRPC model
+    func getGrpcEmiliaModel() -> WPUserData {
         let grpcEmilia = WPUserData()
         grpcEmilia.name = self.emiliaName
         grpcEmilia.token = self.emiliaToken
@@ -56,10 +62,44 @@ class ViewController: UIViewController {
         grpcPersonality.add(grpcMagic)
         grpcEmilia.personalityArray = grpcPersonality
         
-        userManager.getBestPersonality(withRequest: grpcEmilia) { (response: WPUserResponse?, error: Error?) in
+        return grpcEmilia
+    }
+    
+    // Create REST model
+    func getJsonEmiliaModel() -> JSON? {
+        let kindnessPersonality = PersonalityData(name: self.emiliaKindnessKey, amount: self.emiliaKindnessAmount)
+        let magicPersonality = PersonalityData(name: self.emiliaMagicKey, amount: self.emiliaMagicAmount)
+        let personalityData = [kindnessPersonality, magicPersonality]
+        let restEmilia = UserData(name: self.emiliaName, token: self.emiliaToken, level: self.emiliaLevel, personality: personalityData)
+        let jsonEmilia = restEmilia.toJSON()
+        
+        return jsonEmilia
+    }
+    
+    func showAlert(_ message: String) {
+        let alertController = UIAlertController(title: message, message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func getUnixTimeInSeconds() -> TimeInterval {
+        return Date().timeIntervalSince1970
+    }
+    
+    func getLatencyAlert(startTime: TimeInterval, endTime: TimeInterval) {
+        let latencyInMs = (endTime - startTime) * 1000;
+        self.showAlert("Latency: \(latencyInMs) ms")
+    }
+
+    // MARK: Actions
+    @IBAction func sendSingleRequestOnGrpc(_ sender: UIButton) {
+        let startUnixTime = self.getUnixTimeInSeconds()
+        
+        userManager.getBestPersonality(withRequest: self.getGrpcEmiliaModel()) { (response: WPUserResponse?, error: Error?) in
             if let res = response {
                 print("RESPONSE: \(res)")
-                self.showAlert(res.response)
+                let endUnixTime = self.getUnixTimeInSeconds()
+                self.getLatencyAlert(startTime: startUnixTime, endTime: endUnixTime)
             } else if let err = error {
                 print("ERROR: \(err)")
                 self.showAlert(err.localizedDescription)
@@ -67,20 +107,16 @@ class ViewController: UIViewController {
         }
     }
 
-    @IBAction func sendDataOnRestApi(_ sender: UIButton) {
-        // Create REST model
-        let kindnessPersonality = PersonalityData(name: self.emiliaKindnessKey, amount: self.emiliaKindnessAmount)
-        let magicPersonality = PersonalityData(name: self.emiliaMagicKey, amount: self.emiliaMagicAmount)
-        let personalityData = [kindnessPersonality, magicPersonality]
-        let restEmilia = UserData(name: self.emiliaName, token: self.emiliaToken, level: self.emiliaLevel, personality: personalityData)
-        let jsonEmilia = restEmilia.toJSON()
+    @IBAction func sendSingleRequestOnRestfulApi(_ sender: UIButton) {
+        let startUnixTime = self.getUnixTimeInSeconds()
         
-        Alamofire.request(ViewController.restHost, method: .post, parameters: jsonEmilia, encoding: JSONEncoding.default, headers: nil).validate().responseJSON { response in
+        Alamofire.request(ViewController.restHost, method: .post, parameters: self.getJsonEmiliaModel(), encoding: JSONEncoding.default, headers: nil).validate().responseJSON { response in
             switch response.result {
             case .success(let response):
                 if let userResponse = UserResponse(json: response as! Gloss.JSON) {
                     print("RESPONSE: \(userResponse)")
-                    self.showAlert(userResponse.response)
+                    let endUnixTime = self.getUnixTimeInSeconds()
+                    self.getLatencyAlert(startTime: startUnixTime, endTime: endUnixTime)
                 } else {
                     self.showAlert("Whoops, something wrong happened with JSON deserialization.")
                 }
@@ -91,9 +127,56 @@ class ViewController: UIViewController {
         }
     }
     
-    func showAlert(_ message: String) {
-        let alertController = UIAlertController(title: message, message: nil, preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-        self.present(alertController, animated: true, completion: nil)
+    @IBAction func sendHundredRequestsOnGrpc(_ sender: UIButton) {
+        self.grpcRequests = 0
+        let startUnixTime = self.getUnixTimeInSeconds()
+        self.sendHundredRequestsOnGrpc(startTime: startUnixTime)
+    }
+    
+    func sendHundredRequestsOnGrpc(startTime: TimeInterval) {
+        userManager.getBestPersonality(withRequest: self.getGrpcEmiliaModel()) { (response: WPUserResponse?, error: Error?) in
+            if let res = response {
+                if self.grpcRequests < 100 {
+                    self.grpcRequests += 1
+                    self.sendHundredRequestsOnGrpc(startTime: startTime)
+                } else {
+                    print("RESPONSE: \(res)")
+                    let endUnixTime = self.getUnixTimeInSeconds()
+                    self.getLatencyAlert(startTime: startTime, endTime: endUnixTime)
+                }
+            } else if let err = error {
+                print("ERROR: \(err)")
+                self.showAlert(err.localizedDescription)
+            }
+        }
+    }
+    
+    @IBAction func sendHundredRequestsOnRestfulApi(_ sender: UIButton) {
+        self.restfulApiRequests = 0
+        let startUnixTime = self.getUnixTimeInSeconds()
+        self.sendHundredRequestsOnRestfulApi(startTime: startUnixTime)
+    }
+    
+    func sendHundredRequestsOnRestfulApi(startTime: TimeInterval) {
+        Alamofire.request(ViewController.restHost, method: .post, parameters: self.getJsonEmiliaModel(), encoding: JSONEncoding.default, headers: nil).validate().responseJSON { response in
+            switch response.result {
+            case .success(let response):
+                if let userResponse = UserResponse(json: response as! Gloss.JSON) {
+                    if self.restfulApiRequests < 100 {
+                        self.restfulApiRequests += 1
+                        self.sendHundredRequestsOnRestfulApi(startTime: startTime)
+                    } else {
+                        print("RESPONSE: \(userResponse)")
+                        let endUnixTime = self.getUnixTimeInSeconds()
+                        self.getLatencyAlert(startTime: startTime, endTime: endUnixTime)
+                    }
+                } else {
+                    self.showAlert("Whoops, something wrong happened with JSON deserialization.")
+                }
+            case .failure(let error):
+                print("ERROR: \(error)")
+                self.showAlert(error.localizedDescription)
+            }
+        }
     }
 }
